@@ -97,22 +97,23 @@ pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation -
 
 Run the following command to train a generator:
 ```
-CUDA_VISIBLE_DEVICES=3,4,5 nohup  python3 -m torch.distributed.launch --nproc_per_node=3 --master_port 23411 train_M3D.py --gs  --match_target 802 --batch_size 16  --epochs 10 --model_type vgg19_bn --log_dir ./checkpoint/vgg19_bn_M3D_3gpu/ --save_dir ./checkpoint/vgg19_bn_M3D_3gpu --apex_train 1 > ./checkpoint/vgg19_bn_M3D_3gpu/output_802.txt
+CUDA_VISIBLE_DEVICES=0,1,2 nohup  python3 -m torch.distributed.launch --nproc_per_node=3 --master_port 23411 train_M3D.py --gs  --match_target 802 --batch_size 16  --epochs 10 --model_type vgg19_bn --log_dir ./checkpoint/vgg19_bn_M3D_3gpu/ --save_dir ./checkpoint/vgg19_bn_M3D_3gpu --apex_train 1 > ./checkpoint/vgg19_bn_M3D_3gpu/output_802.txt
 ```
 
 
 ## The Implementation Details of Discriminators
 
 Note that since the training data input to D1 and D2 are the same, the two models need to be initialized slightly different to ensure the model discrepancy loss works. 
-We simply use a pre-trained model for one discriminator, and a model fine-tuned for one batch using ImageNet training data for another discriminator. We saved the finetuned models in 'pretrain_save_models' for convenience here. You can also finetune the discriminator during the training period.
+We simply use a pre-trained model for one discriminator, and a model fine-tuned for one batch using ImageNet training data for another discriminator. We saved the finetuned models in 'pretrain_save_models' for convenience here. You can also finetune the discriminator during the training period！
 
+[vgg19_bn](https://drive.google.com/file/d/1u-emEvbg4d0E4r0WuhcNYPvB729V0YTT/view?usp=sharing)|[resnet50](https://drive.google.com/file/d/1trHp8Hqb_4WHXBoE0YNTJAr5u3eNKm7S/view?usp=sharing)|[densenet121](https://drive.google.com/file/d/1DLbAP_KMNrzCeRkKNWFO6IHfdpwqmGrT/view?usp=sharing)
 
 ## Evaluation
 
  
 Run the following command to evaluate transferability of the 10 targets to black-box model on the ImageNet-Val.
 ```
-  CUDA_VISIBLE_DEVICES=4 python eval_M3D.py  --source_model resnet50 --target_model densenet121
+  CUDA_VISIBLE_DEVICES=0 python eval_M3D.py  --source_model resnet50 --target_model densenet121
 ```
 
 ## Contact
