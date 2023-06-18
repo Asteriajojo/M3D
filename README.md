@@ -26,6 +26,7 @@ If you find our work, this repository and pretrained adversarial generators usef
 3) [Pretrained Targeted Generator](#Pretrained-Targeted-Generator) 
 4) [Installation](#Installation) 
 5) [Training](#Training)
+6) [The Implementation Details of Discriminators](#The-Implementation-Details-of-Discriminators)
 6) [Evaluation](#Evaluation)
 
 
@@ -98,6 +99,12 @@ Run the following command to train a generator:
 ```
 CUDA_VISIBLE_DEVICES=3,4,5 nohup  python3 -m torch.distributed.launch --nproc_per_node=3 --master_port 23411 train_M3D.py --gs  --match_target 802 --batch_size 16  --epochs 10 --model_type vgg19_bn --log_dir ./checkpoint/vgg19_bn_M3D_3gpu/ --save_dir ./checkpoint/vgg19_bn_M3D_3gpu --apex_train 1 > ./checkpoint/vgg19_bn_M3D_3gpu/output_802.txt
 ```
+
+
+## The Implementation Details of Discriminators
+
+Note that since the training data input to D1 and D2 are the same, the two models need to be initialized slightly different to ensure the model discrepancy loss works. 
+We simply use a pre-trained model for one discriminator, and a model fine-tuned for one batch using ImageNet training data for another discriminator. We saved the finetuned models in 'pretrain_save_models' for convenience here. You can also finetune the discriminator during the training period.
 
 
 ## Evaluation
