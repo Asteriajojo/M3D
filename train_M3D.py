@@ -170,7 +170,7 @@ if args.gs:
 
 ##################### information for dataset  ####################################
 
-### attack data
+### training data
 source_samples_train = [] 
 train_set = torchvision.datasets.ImageFolder(args.src, TwoCropTransform(train_transform, img_size))
 for img_name, label in train_set.samples:
@@ -181,7 +181,7 @@ train_sampler = torch.utils.data.distributed.DistributedSampler(train_set)
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=False, num_workers=4,
                                            pin_memory=True,sampler=train_sampler,drop_last=True)
 
-attack_size = len(train_set)
+# attack_size = len(train_set)
 
 
 # clean data
