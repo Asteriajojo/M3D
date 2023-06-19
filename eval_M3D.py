@@ -84,12 +84,8 @@ model.eval()
 # Data
 ####################
 # Input dimensions
-if args.target_model =='inception_v3':
-    scale_size = 300
-    img_size = 299  
-else:
-    scale_size = 256
-    img_size = 224
+scale_size = 256
+img_size = 224
 
 data_transform = transforms.Compose([
     transforms.Resize(scale_size),
@@ -108,9 +104,6 @@ def normalize(t):
 
 if args.num_targets==10:
     targets = [24,99,245,344,471,555,661,701,802,919]
-
-
-
 
 
 total_acc = 0
