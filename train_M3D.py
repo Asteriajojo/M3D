@@ -268,19 +268,19 @@ for epoch in range(args.epochs):
                 adv_aug_out = model(normalize(adv_aug.detach()))
                 img_all_out = model(normalize(img_all))
 
-                adv_out_mcd = model_m3d(normalize(adv.detach()))
-                adv_rot_out_mcd = model_m3d(normalize(adv_rot.detach()))
-                adv_aug_out_mcd = model_m3d(normalize(adv_aug.detach()))
-                img_all_out_mcd = model_m3d(normalize(img_all))                
+                adv_out_m3d = model_m3d(normalize(adv.detach()))
+                adv_rot_out_m3d = model_m3d(normalize(adv_rot.detach()))
+                adv_aug_out_m3d = model_m3d(normalize(adv_aug.detach()))
+                img_all_out_m3d = model_m3d(normalize(img_all))                
 
                 loss_L1=0.0
-                for out, out_mcd in [[adv_out, adv_out_mcd], [adv_rot_out, adv_rot_out_mcd], [adv_aug_out, adv_aug_out_mcd]]:
+                for out, out_m3d in [[adv_out, adv_out_m3d], [adv_rot_out, adv_rot_out_m3d], [adv_aug_out, adv_aug_out_m3d]]:
                     
-                    loss_L1 +=torch.mean(torch.abs(F.softmax(out, dim=1) - F.softmax(out_mcd, dim=1)))
+                    loss_L1 +=torch.mean(torch.abs(F.softmax(out, dim=1) - F.softmax(out_m3d, dim=1)))
                 
                 loss_class = torch.nn.CrossEntropyLoss()(img_all_out, img_all_label)
-                loss_class_mcd = torch.nn.CrossEntropyLoss()(img_all_out_mcd, img_all_label)               
-                loss_D = loss_class + loss_class_mcd - loss_L1
+                loss_class_m3d = torch.nn.CrossEntropyLoss()(img_all_out_m3d, img_all_label)               
+                loss_D = loss_class + loss_class_m3d - loss_L1
 
                 loss_D = reduce_mean(loss_D, dist.get_world_size())  
                 if args.apex_train and not torch.isnan(loss_D):
@@ -317,17 +317,17 @@ for epoch in range(args.epochs):
                 adv_rot_out = model(normalize(adv_rot))
                 adv_aug_out = model(normalize(adv_aug))
 
-                adv_out_mcd = model_m3d(normalize(adv))
-                adv_rot_out_mcd = model_m3d(normalize(adv_rot))
-                adv_aug_out_mcd = model_m3d(normalize(adv_aug))
+                adv_out_m3d = model_m3d(normalize(adv))
+                adv_rot_out_m3d = model_m3d(normalize(adv_rot))
+                adv_aug_out_m3d = model_m3d(normalize(adv_aug))
 
                 loss_attack, loss_L1 = 0.0, 0.0
-                for out in [adv_out, adv_rot_out, adv_aug_out, adv_out_mcd, adv_rot_out_mcd, adv_aug_out_mcd]:
+                for out in [adv_out, adv_rot_out, adv_aug_out, adv_out_m3d, adv_rot_out_m3d, adv_aug_out_m3d]:
 
                     loss_attack += torch.nn.CrossEntropyLoss()(out , target_label) 
                                                       
-                for out, out_mcd in [[adv_out, adv_out_mcd], [adv_rot_out, adv_rot_out_mcd], [adv_aug_out, adv_aug_out_mcd]]:
-                    loss_L1 +=torch.mean(torch.abs(F.softmax(out, dim=1) - F.softmax(out_mcd, dim=1)))
+                for out, out_m3d in [[adv_out, adv_out_m3d], [adv_rot_out, adv_rot_out_m3d], [adv_aug_out, adv_aug_out_m3d]]:
+                    loss_L1 +=torch.mean(torch.abs(F.softmax(out, dim=1) - F.softmax(out_m3d, dim=1)))
                 loss = loss_attack + loss_L1
                 loss = reduce_mean(loss, dist.get_world_size())       
                 loss_f2 = loss
